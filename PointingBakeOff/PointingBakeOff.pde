@@ -89,9 +89,10 @@ void draw()
   for (int i = 0; i < 16; i++)// for all button
     drawButton(i); //draw button
 
+  //fill(255,255,255,200);  //modify
   fill(255, 0, 0, 200); // set fill color to translucent red
   ellipse(mouseX, mouseY, 20, 20); //draw user cursor as a circle with a diameter of 20
-
+  //cursor(CROSS);
   DrawLine();
 }
 
@@ -150,11 +151,13 @@ void drawButton(int i)
     if (trials.get(trialNum) == i) {// see if current button is the target
       SetCurrentButton(bounds.x, bounds.y);
       fill(0, 255, 255); // if so, fill cyan
+     // fill(255,0,0);
     } else if (trials.get(trialNum+1) == i) // show next button
     {
       nextBounds = getButtonLocation(i);
       SetNextButton(nextBounds.x, nextBounds.y);
-      fill(0, 50, 50); // if so, fill dark cyan
+      //fill(0, 50, 50); // if so, fill dark cyan
+      fill(64,64,64);
     } else
       fill(200); // if not, fill gray
   } else {
@@ -240,5 +243,7 @@ void SetCurrentButton(float x, float y) {
 }
 void DrawLine() {
   stroke(255,0,0);
+  strokeWeight(4);
   line(mouseX, mouseY, currentButtonX, currentButtonY);
+  noStroke();
 }
