@@ -32,7 +32,7 @@ int  isHited = 0;
 void setup()
 {
   size(700, 700); // set the size of the window
-  file = new SoundFile(this,"click.mp3");
+  //file = new SoundFile(this,"click.mp3");
   //fix center position
   surface.setLocation(displayWidth/2-350,displayHeight/2-350);
   //surface.setAlwaysOnTop(true);
@@ -91,10 +91,12 @@ void draw()
   for (int i = 0; i < 16; i++)// for all button
     drawButton(i); //draw button
   
-  //fill(255,255,255,200);  //modify
-  fill(255, 0, 0, 200); // set fill color to translucent red
-  ellipse(mouseX, mouseY, 20, 20); //draw user cursor as a circle with a diameter of 20
-  //cursor(CROSS);
+  stroke(255,0,0);
+  strokeWeight(2);
+  line(mouseX-15, mouseY, mouseX+15, mouseY);
+  line(mouseX, mouseY+15, mouseX, mouseY-15);
+  noFill();
+  ellipse(mouseX, mouseY, 20, 20);
   DrawLine();
 }
 
@@ -213,7 +215,7 @@ void InputFunction(){
   {
     System.out.println("HIT! " + trialNum + " " + (millis() - startTime)); // success
     hits++;
-     file.play();
+    // file.play();
   } else
   {
     System.out.println("MISSED! " + trialNum + " " + (millis() - startTime)); // fail
