@@ -1,3 +1,4 @@
+
 import java.awt.AWTException;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -5,10 +6,11 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import processing.core.PApplet; 
-import processing.sound.*;
-SoundFile file;
-
-//when in doubt, consult the Processsing reference: https://processing.org/reference/
+// Sound libary
+import ddf.minim.*;
+import ddf.minim.signals.*;
+import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
 
 int margin = 200; //set the margina around the squares
 final int padding = 50; // padding between buttons and also their width/height
@@ -28,12 +30,17 @@ float currentButtonX;
 float currentButtonY;
 int numRepeats = 1; //sets the number of times each button repeats in the test
 int  isHited = 0;
+//Sound variable
+Minim m;
+AudioPlayer click;
 
 void setup()
 {
   size(700, 700); // set the size of the window
-  //file = new SoundFile(this,"click.mp3");
-  //fix center position
+  //setup sound
+  m = new Minim(this);
+  click = m.loadFile("click.wav");
+  
   surface.setLocation(displayWidth/2-350,displayHeight/2-350);
   //surface.setAlwaysOnTop(true);
   
@@ -215,7 +222,9 @@ void InputFunction(){
   {
     System.out.println("HIT! " + trialNum + " " + (millis() - startTime)); // success
     hits++;
-    // file.play();
+    //sound play and rewind after play
+     click.play();
+     click.rewind();
   } else
   {
     System.out.println("MISSED! " + trialNum + " " + (millis() - startTime)); // fail
