@@ -4,7 +4,9 @@ import java.awt.Robot;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import processing.core.PApplet;
+import processing.core.PApplet; 
+import processing.sound.*;
+SoundFile file;
 
 //when in doubt, consult the Processsing reference: https://processing.org/reference/
 
@@ -25,12 +27,12 @@ float nextButtonY;
 float currentButtonX;
 float currentButtonY;
 int numRepeats = 1; //sets the number of times each button repeats in the test
-
+int  isHited = 0;
 
 void setup()
 {
   size(700, 700); // set the size of the window
-  
+  file = new SoundFile(this,"click.mp3");
   //fix center position
   surface.setLocation(displayWidth/2-350,displayHeight/2-350);
   //surface.setAlwaysOnTop(true);
@@ -88,7 +90,7 @@ void draw()
 
   for (int i = 0; i < 16; i++)// for all button
     drawButton(i); //draw button
-
+  
   //fill(255,255,255,200);  //modify
   fill(255, 0, 0, 200); // set fill color to translucent red
   ellipse(mouseX, mouseY, 20, 20); //draw user cursor as a circle with a diameter of 20
@@ -98,40 +100,7 @@ void draw()
 
 void mousePressed() // test to see if hit was in target!
 {
-  if (trialNum >= trials.size()) //if task is over, just return
-    return;
-
-  if (trialNum == 0) //check if first click, if so, start timer
-    startTime = millis();
-
-  if (trialNum == trials.size() - 1) //check if final click
-  {
-    finishTime = millis();
-    //write to terminal some output:
-    println("Hits: " + hits);
-    println("Misses: " + misses);
-    println("Accuracy: " + (float)hits*100f/(float)(hits+misses) +"%");
-    println("Total time taken: " + (finishTime-startTime) / 1000f + " sec");
-    println("Average time for each button: " + ((finishTime-startTime) / 1000f)/(float)(hits+misses) + " sec");
-  }
-
-  Rectangle bounds = getButtonLocation(trials.get(trialNum));
-
-  //check to see if mouse cursor is inside button 
-  if ((mouseX > bounds.x && mouseX < bounds.x + bounds.width) && (mouseY > bounds.y && mouseY < bounds.y + bounds.height)) // test to see if hit was within bounds
-  {
-    System.out.println("HIT! " + trialNum + " " + (millis() - startTime)); // success
-    hits++;
-  } else
-  {
-    System.out.println("MISSED! " + trialNum + " " + (millis() - startTime)); // fail
-    misses++;
-  }
-
-  trialNum++; //Increment trial number
-
-  //in this example code, we move the mouse back to the middle
-  //robot.mouseMove(width/2, (height)/2); //on click, move cursor to roughly center of window!
+   InputFunction();
 }  
 
 //probably shouldn't have to edit this method
@@ -150,8 +119,8 @@ void drawButton(int i)
   if (trialNum != trials.size()-1) { //check if final click
     if (trials.get(trialNum) == i) {// see if current button is the target
       SetCurrentButton(bounds.x, bounds.y);
-      fill(0, 255, 255); // if so, fill cyan
-     // fill(255,0,0);
+      //fill(0, 255, 255); // if so, fill cyan
+     fill(255,0,0);
     } else if (trials.get(trialNum+1) == i) // show next button
     {
       nextBounds = getButtonLocation(i);
@@ -186,36 +155,7 @@ void keyPressed()
 {
 
   if (keyCode ==32) {
-    if (trialNum >= trials.size()) //if task is over, just return
-      return;
-
-    if (trialNum == 0) //check if first click, if so, start timer
-      startTime = millis();
-
-    if (trialNum == trials.size() - 1) //check if final click
-    {
-      finishTime = millis();
-      //write to terminal some output:
-      println("Hits: " + hits);
-      println("Misses: " + misses);
-      println("Accuracy: " + (float)hits*100f/(float)(hits+misses) +"%");
-      println("Total time taken: " + (finishTime-startTime) / 1000f + " sec");
-      println("Average time for each button: " + ((finishTime-startTime) / 1000f)/(float)(hits+misses) + " sec");
-    }
-
-    Rectangle bounds = getButtonLocation(trials.get(trialNum));
-
-    //check to see if mouse cursor is inside button 
-    if ((mouseX > bounds.x && mouseX < bounds.x + bounds.width) && (mouseY > bounds.y && mouseY < bounds.y + bounds.height)) // test to see if hit was within bounds
-    {
-      System.out.println("HIT! " + trialNum + " " + (millis() - startTime)); // success
-      hits++;
-    } else
-    {
-      System.out.println("MISSED! " + trialNum + " " + (millis() - startTime)); // fail
-      misses++;
-    }
-    trialNum++; //Increment trial number
+     InputFunction();
   } else if (keyCode == 82) {   //Keycode 82 is 'R' keyboard button
     Reset();
   }
@@ -244,6 +184,44 @@ void SetCurrentButton(float x, float y) {
 void DrawLine() {
   stroke(255,0,0);
   strokeWeight(4);
-  line(mouseX, mouseY, currentButtonX, currentButtonY);
+  line(mouseX, mouseY, currentButtonX + (buttonSize/2), currentButtonY + (buttonSize/2));
   noStroke();
+}
+
+void InputFunction(){
+  if (trialNum >= trials.size()) //if task is over, just return
+    return;
+
+  if (trialNum == 0) //check if first click, if so, start timer
+    startTime = millis();
+
+  if (trialNum == trials.size() - 1) //check if final click
+  {
+    finishTime = millis();
+    //write to terminal some output:
+    println("Hits: " + hits);
+    println("Misses: " + misses);
+    println("Accuracy: " + (float)hits*100f/(float)(hits+misses) +"%");
+    println("Total time taken: " + (finishTime-startTime) / 1000f + " sec");
+    println("Average time for each button: " + ((finishTime-startTime) / 1000f)/(float)(hits+misses) + " sec");
+  }
+
+  Rectangle bounds = getButtonLocation(trials.get(trialNum));
+
+  //check to see if mouse cursor is inside button 
+  if ((mouseX > bounds.x && mouseX < bounds.x + bounds.width) && (mouseY > bounds.y && mouseY < bounds.y + bounds.height)) // test to see if hit was within bounds
+  {
+    System.out.println("HIT! " + trialNum + " " + (millis() - startTime)); // success
+    hits++;
+     file.play();
+  } else
+  {
+    System.out.println("MISSED! " + trialNum + " " + (millis() - startTime)); // fail
+    misses++;
+  }
+
+  trialNum++; //Increment trial number
+ //int[] posMouse = surface.setLocation(displayWidth/2-350,displayHeight/2-350);
+  //in this example code, we move the mouse back to the middle
+  //robot.mouseMove(displayWidth/2,displayHeight/2); 
 }
