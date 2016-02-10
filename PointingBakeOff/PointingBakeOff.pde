@@ -1,3 +1,10 @@
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
+import ddf.minim.signals.*;
+import ddf.minim.spi.*;
+import ddf.minim.ugens.*;
+
 
 import java.awt.AWTException;
 import java.awt.Rectangle;
@@ -7,11 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import processing.core.PApplet; 
 // Sound libary
-import ddf.minim.*;
-import ddf.minim.signals.*;
-import ddf.minim.analysis.*;
-import ddf.minim.effects.*;
-
 int margin = 200; //set the margina around the squares
 final int padding = 50; // padding between buttons and also their width/height
 final int buttonSize = 40; // padding between buttons and also their width/height
@@ -40,11 +42,11 @@ void setup()
   //setup sound
   m = new Minim(this);
   click = m.loadFile("click.wav");
-  
-  surface.setLocation(displayWidth/2-350,displayHeight/2-350);
+
+  surface.setLocation(displayWidth/2-350, displayHeight/2-350);
   //surface.setAlwaysOnTop(true);
-  
-   //noCursor(); //hides the system cursor if you want
+
+  //noCursor(); //hides the system cursor if you want
   noStroke(); //turn off all strokes, we're just using fills here (can change this if you want)
   textFont(createFont("Arial", 16)); //sets the font to Arial size 16
   textAlign(CENTER);
@@ -76,7 +78,7 @@ void setup()
 
 void draw()
 {
-    
+
   background(0); //set background to black
 
   if (trialNum >= trials.size()) //check to see if test is over
@@ -97,8 +99,8 @@ void draw()
 
   for (int i = 0; i < 16; i++)// for all button
     drawButton(i); //draw button
-  
-  stroke(255,0,0);
+
+  stroke(255, 0, 0);
   strokeWeight(2);
   line(mouseX-15, mouseY, mouseX+15, mouseY);
   line(mouseX, mouseY+15, mouseX, mouseY-15);
@@ -109,7 +111,7 @@ void draw()
 
 void mousePressed() // test to see if hit was in target!
 {
-   InputFunction();
+  InputFunction();
 }  
 
 //probably shouldn't have to edit this method
@@ -129,18 +131,19 @@ void drawButton(int i)
     if (trials.get(trialNum) == i) {// see if current button is the target
       SetCurrentButton(bounds.x, bounds.y);
       //fill(0, 255, 255); // if so, fill cyan
-     fill(255,0,0);
+      fill(255, 0, 0);
     } else if (trials.get(trialNum+1) == i) // show next button
     {
       nextBounds = getButtonLocation(i);
       SetNextButton(nextBounds.x, nextBounds.y);
       //fill(0, 50, 50); // if so, fill dark cyan
-      fill(64,64,64);
+      fill(64, 64, 64);
     } else
       fill(200); // if not, fill gray
   } else {
     if (trials.get(trialNum) == i) // see if current button is the target
-      fill(0, 255, 255); // if so, fill cyan
+      //fill(0, 255, 255); // if so, fill cyan
+      fill(255,0,0);
     else
       fill(200); // if not, fill gray
   }
@@ -164,23 +167,24 @@ void keyPressed()
 {
 
   if (keyCode ==32) {
-     InputFunction();
+    InputFunction();
   } else if (keyCode == 82) {   //Keycode 82 is 'R' keyboard button
-    Reset();
+    //  Reset();
   }
 }
-
+/*
 void Reset() {   //if you press R button, you can restart the sketch.
-  trialNum = 0; 
-  startTime = 0;
-  finishTime = 0;
-  hits = 0;
-  misses = 0; 
-  numRepeats = 1;
-  trials = new ArrayList<Integer>();
-
-  setup();
-}
+ trialNum = 0; 
+ startTime = 0;
+ finishTime = 0;
+ hits = 0;
+ misses = 0; 
+ numRepeats = 1;
+ trials = new ArrayList<Integer>();
+ 
+ setup();
+ }
+ */
 void SetNextButton(float x, float y) {
 
   nextButtonX = x;
@@ -191,13 +195,18 @@ void SetCurrentButton(float x, float y) {
   currentButtonY = y;
 }
 void DrawLine() {
-  stroke(255,0,0);
+  stroke(255, 0, 0);
   strokeWeight(4);
+ if (trialNum != trials.size()-1) { 
   line(mouseX, mouseY, currentButtonX + (buttonSize/2), currentButtonY + (buttonSize/2));
+ }
+ else{
+   line(mouseX, mouseY, nextButtonX + (buttonSize/2), nextButtonY + (buttonSize/2));
+ }
   noStroke();
 }
 
-void InputFunction(){
+void InputFunction() {
   if (trialNum >= trials.size()) //if task is over, just return
     return;
 
@@ -223,8 +232,8 @@ void InputFunction(){
     System.out.println("HIT! " + trialNum + " " + (millis() - startTime)); // success
     hits++;
     //sound play and rewind after play
-     click.play();
-     click.rewind();
+    click.play();
+    click.rewind();
   } else
   {
     System.out.println("MISSED! " + trialNum + " " + (millis() - startTime)); // fail
@@ -232,7 +241,7 @@ void InputFunction(){
   }
 
   trialNum++; //Increment trial number
- //int[] posMouse = surface.setLocation(displayWidth/2-350,displayHeight/2-350);
+  //int[] posMouse = surface.setLocation(displayWidth/2-350,displayHeight/2-350);
   //in this example code, we move the mouse back to the middle
-  //robot.mouseMove(displayWidth/2,displayHeight/2); 
+  //robot.mouseMove(displayWidth/2,displayHeight/2);
 }
