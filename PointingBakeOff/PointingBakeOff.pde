@@ -30,6 +30,9 @@ float nextButtonY;
 
 float currentButtonX;
 float currentButtonY;
+float storedTime = 0;
+float storedCursorX;
+float storedCursorY;
 int numRepeats = 1; //sets the number of times each button repeats in the test
 int  isHited = 0;
 //Sound variable
@@ -207,6 +210,7 @@ void DrawLine() {
 }
 
 void InputFunction() {
+  
   if (trialNum >= trials.size()) //if task is over, just return
     return;
 
@@ -224,24 +228,45 @@ void InputFunction() {
     println("Average time for each button: " + ((finishTime-startTime) / 1000f)/(float)(hits+misses) + " sec");
   }
 
-  Rectangle bounds = getButtonLocation(trials.get(trialNum));
 
+
+
+
+
+  Rectangle bounds = getButtonLocation(trials.get(trialNum));
+  
+  float buttonCenterX = bounds.x+bounds.width/2;
+  float buttonCenterY = bounds.y+bounds.height/2;
+  //System.out.println(trialNum + "," + buttonCenterX + "," + buttonCenterY + "," +bounds.width + "," +(millis() - startTime)/1000 + ",1"); // success
+  
+  
+  StoreCursorPos(mouseX,mouseY);
   //check to see if mouse cursor is inside button 
   if ((mouseX > bounds.x && mouseX < bounds.x + bounds.width) && (mouseY > bounds.y && mouseY < bounds.y + bounds.height)) // test to see if hit was within bounds
   {
-    System.out.println("HIT! " + trialNum + " " + (millis() - startTime)); // success
+    //System.out.println("HIT! " + trialNum + " " + (millis() - startTime)); // success
+    System.out.println(trialNum + "," +"1,"+ storedCursorX +","+ storedCursorY+"," +buttonCenterX+"," + buttonCenterY + "," + bounds.width +","+(millis() - storedTime)/1000f + "," + "1" ); // success
     hits++;
+    storedTime = millis();
     //sound play and rewind after play
     click.play();
     click.rewind();
   } else
   {
+  System.out.println(trialNum + "," +"1,"+ storedCursorX +","+ storedCursorY+"," +buttonCenterX+"," + buttonCenterY + "," + bounds.width +","+(millis() - storedTime)/1000f + "," + "0" ); // success
     System.out.println("MISSED! " + trialNum + " " + (millis() - startTime)); // fail
     misses++;
+    storedTime = millis();
   }
-
+  
   trialNum++; //Increment trial number
   //int[] posMouse = surface.setLocation(displayWidth/2-350,displayHeight/2-350);
   //in this example code, we move the mouse back to the middle
   //robot.mouseMove(displayWidth/2,displayHeight/2);
+  
+}
+
+void StoreCursorPos(float x, float y ){
+  storedCursorX = x;
+  storedCursorY = y;
 }
